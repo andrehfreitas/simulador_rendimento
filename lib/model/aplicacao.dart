@@ -20,19 +20,19 @@ class Aplicacao {
 
 
   // Setters
-  set valorMensal (String novoValorMensal) {
+  set valorMensal(String novoValorMensal) {
     if (novoValorMensal.length <= 255) {
       _valorMensal = novoValorMensal;
     }
   }
 
-  set valorAcumulado (String novoValorAcumulado) {
+  set valorAcumulado(String novoValorAcumulado) {
     if (novoValorAcumulado.length <= 255) {
     _valorAcumulado = novoValorAcumulado;
     }
   }
 
-  set valorAtualizado (String novoValorAtualizado) {
+  set valorAtualizado(String novoValorAtualizado) {
     if (novoValorAtualizado.length <= 255) {
     _valorAtualizado = novoValorAtualizado;
     }
@@ -42,20 +42,23 @@ class Aplicacao {
     _prazo = novoPrazo;
   }
 
-
   // Método que transforma o objeto em Map
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map['id'] = _id;
     map['valorMensal'] = _valorMensal;
     map['valorAcumulado'] = _valorAcumulado;
     map['valorAtualizado'] = _valorAtualizado;
     map['prazo'] = _prazo;
+
+    if (_id != null) {
+      map["id"] = _id;
+    }
+    return map;
   }
 
 
   // Contrutor nomeado que transforma map no objeto
-  Aplicacao.fromObject (dynamic o) {
+  Aplicacao.fromObject(dynamic o) {
     this._id = o['id'];
     this._valorMensal = o['valorMensal'];
     this._valorAcumulado = o['valorAcumulado'];

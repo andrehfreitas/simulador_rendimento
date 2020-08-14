@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:simulador_rendimento/screens/aplicacaolist.dart';
+import 'package:simulador_rendimento/util/dbhelper.dart';
+import 'package:simulador_rendimento/model/aplicacao.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,11 +23,14 @@ class MyApp extends StatelessWidget {
 }
 
 class Simulador extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() => SimuladorState();
 }
 
 class SimuladorState extends State<Simulador> {
+
+  Aplicacao aplicacao;
 
   // Controles dos TextFiels
   TextEditingController valorController = TextEditingController();
@@ -39,6 +45,8 @@ class SimuladorState extends State<Simulador> {
   String valorAtualizado = '';
   String prazo = '';
 
+  // Instanciar o dbhelper:
+  DbHelper helper = DbHelper();
 
   // Método Build
   @override
@@ -50,6 +58,9 @@ class SimuladorState extends State<Simulador> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Simulador de rentabilidade'),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.list), onPressed: _listaSimulacoes),
+        ]
       ),
 
       body: Padding(
@@ -112,11 +123,12 @@ class SimuladorState extends State<Simulador> {
                       ),
                       onPressed: () {
                         setState(() {
-                        valorMensal = 'Valor aplicado mensalmente: ' + formatter.format(double.parse(valorController.text));
-                        prazo = 'Prazo da aplicação: ' + prazoController.text + ' meses';
-                        valorAcumulado = calculaTotalAcumulado();
-                        valorAtualizado = calculaTotalRentabilizado();
+                          valorMensal = 'Valor aplicado mensalmente: ' + formatter.format(double.parse(valorController.text));
+                          prazo = 'Prazo da aplicação: ' + prazoController.text + ' meses';
+                          valorAcumulado = calculaTotalAcumulado();
+                          valorAtualizado = calculaTotalRentabilizado();
                         });
+                        aplicacao = Aplicacao(valorMensal, valorAcumulado, valorAtualizado, prazo);
                       },
                     ),
                   ),
@@ -143,11 +155,11 @@ class SimuladorState extends State<Simulador> {
                       ),
                       onPressed: () {
                         setState(() {
-                        valorMensal = 'Valor aplicado mensalmente: ' + formatter.format(double.parse(valorController.text));
-                        prazo = 'Prazo da aplicação: ' + prazoController.text + ' meses';
-                        valorAcumulado = calculaTotalAcumulado();
-                        valorAtualizado = calculaTotalRentabilizado();
+                          helper.insertAplicacao(aplicacao);
+                          limpaFormulario();
+                          _showToast(context);
                         });
+                        //_showToast(context);
                       },
                     ),
                   ),
@@ -160,31 +172,53 @@ class SimuladorState extends State<Simulador> {
     );
   }
 
-String calculaTotalAcumulado(){
-  double valorMensal = double.parse(valorController.text);
-  int prazo = int.parse(prazoController.text);
+  String calculaTotalAcumulado(){
+    double valorMensal = double.parse(valorController.text);
+    int prazo = int.parse(prazoController.text);
 
-  double valorTotalAcumulado = valorMensal * prazo;
-  String saida = 'Valor total aplicado:  ' + formatter.format(valorTotalAcumulado);
+    double valorTotalAcumulado = valorMensal * prazo;
+    String saida = 'Valor total aplicado:  ' + formatter.format(valorTotalAcumulado);
 
-  return saida;
-}
-
-
-String calculaTotalRentabilizado(){
-  double valorMensal = double.parse(valorController.text);
-  double taxa = double.parse(taxaController.text);
-  int prazo = int.parse(prazoController.text);
-  double valorAtualizado = 0.0;
-
-  for (var i = 0; i < prazo; i++){
-    valorAtualizado = valorAtualizado + (valorAtualizado * taxa/100) + valorMensal;
+    return saida;
   }
 
-  String saida = 'Valor total aplicado + Rentabilidade:  ' + formatter.format(valorAtualizado); 
-  
-  return saida;
-}
 
+  String calculaTotalRentabilizado(){
+    double valorMensal = double.parse(valorController.text);
+    double taxa = double.parse(taxaController.text);
+    int prazo = int.parse(prazoController.text);
+    double valorAtualizado = 0.0;
+
+    for (var i = 0; i < prazo; i++){
+      valorAtualizado = valorAtualizado + (valorAtualizado * taxa/100) + valorMensal;
+    }
+
+    String saida = 'Valor total aplicado + Rentabilidade:  ' + formatter.format(valorAtualizado); 
+    
+    return saida;
+  }
+
+  limpaFormulario(){
+    valorController.text = '';
+    taxaController.text = '';
+    prazoController.text = '';
+    valorMensal = '';
+    valorAcumulado = '';
+    valorAtualizado = '';
+    prazo = '';  
+  }
+
+  void _listaSimulacoes() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AplicacaoList()));
+  }
+
+  void _showToast(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: const Text('Simulação salva com sucesso'),
+      ),
+    );
+  } 
 
 }

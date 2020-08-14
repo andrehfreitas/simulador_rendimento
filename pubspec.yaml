@@ -23,7 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
+# Dependência para uso do SQLite  
+  sqflite: any
+  path_provider: any
   intl: ^0.16.1
 
 
