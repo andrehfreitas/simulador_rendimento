@@ -210,5 +210,4 @@ class SimuladorState extends State<Simulador> {
   void _listaSimulacoes() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => AplicacaoList()));
   }
-
 }
