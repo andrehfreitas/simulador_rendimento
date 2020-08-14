@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:simulador_rendimento/model/aplicacao.dart';
+import 'package:simulador_rendimento/screens/aplicacao-card.dart';
 import 'package:simulador_rendimento/util/dbhelper.dart';
 
-/* class MySimulations extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Simulador2',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: AplicacaoList(),
-    );
-  }
-} */
 
 class AplicacaoList extends StatefulWidget {
 @override
@@ -38,15 +26,11 @@ class AplicacaoListState extends State<AplicacaoList>{
 
         for (int i=0; i<count; i++) {
           aplicacaoList.add(Aplicacao.fromObject(result[i]));
-          debugPrint(aplicacaoList[i].valorAcumulado);
         } 
 
         setState(() {
           aplicacoes = aplicacaoList;
         });
-
-        debugPrint("Items " + count.toString());
-
       });
     });
   }
@@ -65,30 +49,40 @@ class AplicacaoListState extends State<AplicacaoList>{
   }
 
 
-  ListView aplicacaoListItems() {
-    return ListView.builder(
-      itemCount: count,
-      itemBuilder: (BuildContext context, int position) {
-        return Card(
-          color: Colors.white,
-          elevation: 2.0,
-          child: Column(
-            children: <Widget> [
-              ListTile(
-                title: Text(this.aplicacoes[position].valorMensal),
-                subtitle: Text(this.aplicacoes[position].prazo),
-              ),
+  Widget aplicacaoListItems() {
+    return Container(
+      child: aplicacoes.length > 0
+      ? ListView.builder(
+        itemCount: count,
+        itemBuilder: (BuildContext context, int position) {
+          return Dismissible(
+            onDismissed: (DismissDirection direction){
+              helper.deleteAplicacao(aplicacoes[position].id);
+              getData();
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Simulação apagada com sucesso'),
+                ),
+              );
+            },
 
-              Divider(height: 0.0,),
-
-              ListTile(
-                title: Text(this.aplicacoes[position].valorAcumulado),
-                subtitle: Text(this.aplicacoes[position].valorAtualizado),
+            background: Container(
+              color: Colors.red,
+              child: Align(
+                child: Text(
+                  'Apagar',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+
+            child: AplicacaoCard(aplicacao: aplicacoes[position],),
+            key: UniqueKey(),
+            direction: DismissDirection.startToEnd,
+          );
+        },
+      )
+    : Center(child: Text('Sem simulações'),)
     );
   }
 }

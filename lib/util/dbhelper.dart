@@ -24,7 +24,7 @@ class DbHelper {
 
   Future<Database> initializeDb() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    String path = dir.path + "aplicacao.db";
+    String path = dir.path + "aplicacao2.db";
     var dbAplicacao = await openDatabase(path, version: 1, onCreate: _createDb);
     return dbAplicacao;
   }
@@ -63,7 +63,7 @@ class DbHelper {
   Future<List> getAplicacoes() async {
     Database db = await this.db;
     var result = await db.rawQuery("SELECT * FROM $tblAplicacao");
-    return result.toList();
+    return result;
   }
 
   
