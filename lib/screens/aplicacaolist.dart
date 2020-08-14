@@ -2,19 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:simulador_rendimento/model/aplicacao.dart';
 import 'package:simulador_rendimento/util/dbhelper.dart';
 
-/* class MySimulations extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Simulador2',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: AplicacaoList(),
-    );
-  }
-} */
 
 class AplicacaoList extends StatefulWidget {
 @override
@@ -38,15 +25,11 @@ class AplicacaoListState extends State<AplicacaoList>{
 
         for (int i=0; i<count; i++) {
           aplicacaoList.add(Aplicacao.fromObject(result[i]));
-          debugPrint(aplicacaoList[i].valorAcumulado);
         } 
 
         setState(() {
           aplicacoes = aplicacaoList;
         });
-
-        debugPrint("Items " + count.toString());
-
       });
     });
   }

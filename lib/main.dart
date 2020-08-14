@@ -127,8 +127,9 @@ class SimuladorState extends State<Simulador> {
                           prazo = 'Prazo da aplicação: ' + prazoController.text + ' meses';
                           valorAcumulado = calculaTotalAcumulado();
                           valorAtualizado = calculaTotalRentabilizado();
+                          aplicacao = Aplicacao(valorMensal, valorAcumulado, valorAtualizado, prazo);
                         });
-                        aplicacao = Aplicacao(valorMensal, valorAcumulado, valorAtualizado, prazo);
+
                       },
                     ),
                   ),
@@ -157,9 +158,7 @@ class SimuladorState extends State<Simulador> {
                         setState(() {
                           helper.insertAplicacao(aplicacao);
                           limpaFormulario();
-                          _showToast(context);
                         });
-                        //_showToast(context);
                       },
                     ),
                   ),
@@ -205,20 +204,20 @@ class SimuladorState extends State<Simulador> {
     valorMensal = '';
     valorAcumulado = '';
     valorAtualizado = '';
-    prazo = '';  
+    prazo = '';
   }
 
   void _listaSimulacoes() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => AplicacaoList()));
   }
 
-  void _showToast(BuildContext context) {
+/*   void _showToast(BuildContext context) {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(
       SnackBar(
         content: const Text('Simulação salva com sucesso'),
       ),
     );
-  } 
+  }  */
 
 }
